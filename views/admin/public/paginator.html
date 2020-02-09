@@ -1,0 +1,19 @@
+{{if gt .Page.PageNums 1}}
+    <ul class="pagination pagination-sm page">
+        {{if .Page.HasPrev}}
+            <li><a href="{{.Page.PageLinkFirst}}">«</a></li>
+            <li><a href="{{.Page.PageLinkPrev}}">‹</a></li>
+        {{end}}
+
+        {{range $index, $page := .Page.Pages}}
+            <li{{if $.Page.IsActive .}} class="active"{{end}}>
+                <a href="{{$.Page.PageLink $page}}">{{$page}}</a>
+            </li>
+        {{end}}
+
+        {{if .Page.HasNext}}
+            <li><a href="{{.Page.PageLinkNext}}">›</a></li>
+            <li><a href="{{.Page.PageLinkLast}}">»</a></li>
+        {{end}}
+    </ul>
+{{end}}

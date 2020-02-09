@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>资讯分类</title>
+    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="/static/css/global.css" media="all">
+    <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.min.css">
+</head>
+
+<body>
+<div class="admin-main">
+
+    <blockquote class="layui-elem-quote">
+        <button class="layui-btn layui-btn-small add">
+            <i class="layui-icon">&#xe608;</i> 添加
+        </button>
+    </blockquote>
+    <fieldset class="layui-elem-field">
+        <legend>资讯分类</legend>
+        <div class="layui-field-box">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>名称</th>
+                    <th>权重</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range $k, $v := .list}}
+                <tr>
+                    <td>{{$v.Id}}</td>
+                    <td>{{$v.Name}}</td>
+                    <td>{{$v.Weight}}</td>
+                    <td>
+                        <a data="{{$v.Id}}" class="layui-btn layui-btn-mini layui-btn-normal edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+                        <a  data="{{$v.Id}}" class="layui-btn layui-btn-danger layui-btn-mini del"><i class="layui-icon">&#xe640;</i>删除</a>
+                    </td>
+                </tr>
+                {{end}}
+                </tbody>
+            </table>
+            <div class="Pagination">
+            {{template "admin/public/paginator.html" .}}
+            </div>
+        </div>
+    </fieldset>
+</div>
+<script type="text/javascript" src="/static/plugins/layui/layui.js"></script>
+<script>
+    layui.use(['laypage','layer','form'], function() {
+        var laypage = layui.laypage,
+                $ = layui.jquery
+        //请求表单
+        $('.add').click(function(){
+            var url = "/admin/category/add";
+            $.get(url,{},function(data){
+                layer.open({
+                    title:'添加',
+                    type: 1,
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['500px'], //宽高
+                    content: data,
+                });
+            })
+        });
+
+        //编辑菜单
+        $('.edit').click(function(){
+            var id = $(this).attr('data');
+            var url = "/admin/category/edit";
+
+            $.get(url,{id:id},function(data){
+
+                layer.open({
+                    title:'编辑',
+                    type: 1,
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['500px'], //宽高
+                    content: data,
+                });
+            })
+        });
+
+        //删除
+        $('.del').click(function(){
+            var id = $(this).attr('data');
+            var url = "/admin/category/delete";
+            layer.confirm('确定删除吗?', {
+                icon: 3,
+                skin: 'layer-ext-moon',
+                btn: ['确认','取消'] //按钮
+            }, function(){
+                $.post(url,{id:id},function(data){
+                    if(!data.status){
+                        layer.msg(data.msg,{icon: 5});//失败的表情
+                        return;
+                    }else{
+                        layer.msg(data.msg, {
+                            icon: 6,//成功的表情
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function(){
+                            location.reload();
+                        });
+                    }
+                })
+            });
+        })
+
+    });
+</script>
+</body>
+
+</html>

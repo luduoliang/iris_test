@@ -1,0 +1,170 @@
+<form class="layui-form">
+    <input type="hidden" name="id" value="{{.info.Id}}" />
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" value="{{.info.Title}}" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">分类</label>
+        <div class="layui-input-inline">
+            <select name="category_id" lay-verify="required">
+                <option value="">请选择分类</option>
+                {{range $k, $v := .category}}
+                    <option value="{{$v.Id}}" {{if eq $v.Id $.info.CategoryId}}selected="selected"{{end}}>{{$v.Name}}</option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div id="file_div" class="layui-input-inline" style="width:auto;">
+            <input type="file" name="pic" class="layui-upload-file" id="logo" {{if ne .info.Pic ""}}num="0"{{else}}num="1"{{end}}><br>
+        {{if ne .info.Pic ""}}
+            <font style="position:relative;display:block;float:left;">
+                <input type="hidden" name="pic" value="{{.info.Pic}}">
+                <img src="{{.info.Pic}}" width="100" height="100">
+                <span class="close_pic" style="position:absolute;right:0;top:0;display:block;width:15px;height:15px;line-height:15px;text-align:center;background:grey;color:red;cursor:pointer;">x</span>
+            </font>
+        {{end}}
+        </div>
+        <div class="layui-form-mid layui-word-aux">图片</div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">简介</label>
+        <div class="layui-input-inline">
+            <textarea name="description"  placeholder="请输入简介" class="layui-textarea">{{.info.Description}}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-inline">
+            <textarea class="summernote" id="content" name="content">{{.info.Content}}</textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">权重</label>
+        <div class="layui-input-inline">
+            <input type="text" name="weight" value="{{.info.Weight}}" placeholder="请输权重" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="addmenu">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<!-- Bootstrap 3.3.6 -->
+<link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.min.css">
+<link href="/static/summernote/summernote.css" rel="stylesheet"/>
+<script src="/static/js/j.js"></script>
+<script src="/static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="/static/summernote/summernote.js"></script>
+<script src="/static/summernote/lang/summernote-zh-CN.js"></script>
+<style>
+    .layui-form-label{width:15%;}
+    .layui-form-item .layui-input-inline{width:80%;}
+</style>
+
+<script>
+    layui.use(['form','upload'], function(){
+        var form = layui.form(),
+                $ = layui.jquery
+        //重新渲染
+        form.render();
+
+        //富文本编辑器
+        $('.summernote').summernote({
+            tabsize: 2,
+            lang: 'zh-CN',
+            minHeight : 300,
+            maxHeight: 500,
+            callbacks: {
+                onImageUpload: function(files) {
+                    var data = new FormData();
+                    var file = files[0];
+                    var that=$(this);
+                    data.append("pic", file);
+                    $.ajax({
+                        type: "POST",
+                        url: '/admin/file/upload',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data:data,
+                        success: function(data) {
+                            if (data.status) {
+                                that.summernote('insertImage', data.data.pic_url); // the insertImage API
+                            }
+                        }
+                    });
+                }
+            },
+        });
+
+        layui.upload({
+            url: "/admin/file/upload"
+            ,title: '上传图片'
+            ,elem: '#logo' //指定原始元素，默认直接查找class="layui-upload-file"
+            ,ext: 'jpg|png|jpeg'
+            ,method: 'post' //上传接口的http类型
+            ,success: function(d){
+                if(!d.status){
+                    layer.msg(d.msg,{icon: 5});//失败的表情
+                    return;
+                }
+                var add_str='<font style="position:relative;display:block;float:left;"><input type="hidden" name="pic" value="'+d.data.pic_url+'"><img src="'+d.data.pic_url+'" width="100" height="100"><span class="close_pic" style="position:absolute;right:0;top:0;display:block;width:15px;height:15px;line-height:15px;text-align:center;background:grey;color:red;cursor:pointer;">x</span></font>';
+                $('#file_div').append(add_str);
+                var num=parseInt($('#logo').attr('num'));
+                $('#logo').attr('num',num-1);
+            }
+        });
+
+
+        $("#logo").click(function(){
+            var num=parseInt($(this).attr('num'));
+            if(num<=0){
+                $(this).attr('disabled',true);
+                return false;
+            }
+        })
+
+        $("#file_div").on('click','span.close_pic',function(){
+            var num=parseInt($(this).parents('div#file_div').find('input').attr('num'));
+            $(this).parents('div#file_div').find('input').attr('num',num+1);
+            $(this).parents('div#file_div').find('input').removeAttr("disabled");
+            $(this).parent("font").remove();
+        })
+
+        //监听提交
+        form.on('submit(addmenu)', function(data){
+            var userInfo = data.field;
+            var url = "/admin/news/edit";
+            $.post(url,userInfo,function(data){
+                if(!data.status){
+                    layer.msg(data.msg,{icon: 5});//失败的表情
+                    return;
+                }else{
+                    layer.msg(data.msg, {
+                        icon: 6,//成功的表情
+                        time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                    }, function(){
+                        location.reload();
+                    });
+                }
+
+            })
+            return false;//阻止表单跳转
+        });
+    });
+</script>

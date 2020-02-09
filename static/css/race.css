@@ -1,0 +1,7 @@
+.layui-form-label{min-width: 130px}
+.input-large{min-width: 400px}
+.close-image{font-size: large;cursor: pointer;position: absolute;}
+.banner-div{padding-bottom: 40px;min-width: 190px}
+.banner-div img{max-height: 300px;max-width: 190px}
+.logo-div img{max-height: 150px;max-width:190px}
+.none-border {border: none;}

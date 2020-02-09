@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>管理平台</title>
+{{template "admin/public/header.html" .}}
+</head>
+
+<body>
+<div class="layui-layout layui-layout-admin">
+{{template "admin/public/top_nav.html" .}}
+    <!-- 左边菜单 -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree admin-nav-tree">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">资讯管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" data-url="/admin/category/list">
+                                <i class="layui-icon" style="top: 1px; font-size: 18px;">&#xe637;</i>
+                                <cite>资讯分类</cite>
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="/admin/news/list">
+                                <i class="layui-icon" style="top: 1px; font-size: 18px;">&#xe62e;</i>
+                                <cite>资讯管理</cite>
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item">
+                    <a href="javascript:;">系统管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" data-url="/admin/admin/list">
+                                <i class="layui-icon" style="top: 1px; font-size: 18px;">&#xe613;</i>
+                                <cite>系统用户</cite>
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 左边菜单 -->
+
+    <div class="layui-body" style="bottom: 0;">
+        <div class="layui-tab admin-nav-card" lay-filter="admin-tab">
+            <ul class="layui-tab-title" id="admin-tab">
+                <li class="layui-this">
+                    <i class="layui-icon" style="top: 2px; font-size: 16px;">&#xe609;</i>
+                    <cite>控制台</cite>
+                </li>
+            </ul>
+            <div class="layui-tab-content" style="min-height: 150px; padding: 5px 0 0 0;" id="admin-tab-container">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="/admin/info"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer footer footer-demo">
+        <div class="layui-main">
+            <p>2016 &copy;
+                <a href="">管理后台</a>
+            </p>
+        </div>
+    </div>
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+</div>
+</body>
+{{template "admin/public/footer.html" .}}
+</html>

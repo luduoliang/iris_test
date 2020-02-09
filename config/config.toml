@@ -1,0 +1,27 @@
+appname = "iris_test"
+httpport = "9091"
+runmode = "dev"
+
+#生成session的cookie名
+session_cookie_name = "iris_test"
+
+#aes加密配置
+[aes]
+aes_key = "qckcmdbbv4u2hwxq"
+aes_iv = "0987654321abcdef"
+
+[redis]
+Addr = "127.0.0.1:6379"
+Password = ""
+DB = 0
+
+[prod]
+#线上环境
+database_driver = "mysql"
+database_connect_string = "root:root@/iris_test?charset=utf8mb4&parseTime=True&loc=Local"
+
+[dev]
+#测试环境
+database_driver = "mysql"
+database_connect_string = "root:root@/iris_test?charset=utf8mb4&parseTime=True&loc=Local"
+
